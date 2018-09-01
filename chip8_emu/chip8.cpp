@@ -101,6 +101,26 @@ void chip8::emulateCycle()
 		}
 		break;
 
+		case 0xE000:			
+			switch (opcode & 0x00FF) {
+				case 0x009E:				// EX9E: Skips the next instruction if key stroed in VX is pressed
+					if (key[V[opcode & 0x0F00]] != 0)
+						pc += 4;
+					else
+						pc += 2;
+				break;
+
+				case 0x00A1:				//EXA1: Skips next instruction if the key stored in VX ISN'T pressed
+					if (key[V[(opcode & 0x0F00) >> 8]] == 0)
+						pc += 4;
+					else
+						pc += 2;
+				break;
+
+				default:
+					printf("Unknown opcode[0xE000]: 0x%X\n", opcode);
+			}
+			break;
 		//more opcodes//
 
 		default:
