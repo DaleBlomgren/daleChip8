@@ -61,11 +61,16 @@ void chip8::emulateCycle()
 			switch (opcode & 0x000F)
 			{
 				case 0x0000:	// 0x00E0: clear screen
-					//execute
+					for (int i = 0; i < 2048; ++i)
+						gfx[i] = 0x0;
+					drawFlag = true;
+					pc += 2;
 				break;
 
-				case 0x000E:	//0x00EE: returns from subroutine
-					//execute
+				case 0x000E:		//0x00EE: returns from subroutine
+					--sp;			// decrement the level of your stack
+					pc = stack[sp]; //insert stored return address from stack back to your program counter
+					pc += 2;
 				break;
 
 				default:
