@@ -28,17 +28,17 @@ int display_height = SCREEN_HEIGHT * modifier;
 int main()
 {
 	//setup window
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	sf::RenderWindow window(sf::VideoMode(display_width, display_height), "SFML works!");
+	//sf::CircleShape shape(100.f);
+	//shape.setFillColor(sf::Color::Green);
 
 	//setup input, clear memory registers and screen
 
 	// load game into memory
-	for (int i = 0; i < bufferSize; ++i) {
-		memory[i + 512] = buffer[i];
-	}
+	
 	//emulation loop
+	sf::Image image;
+	image.create(display_width, display_height, sf::Color::White);
 	while (window.isOpen())
 	{
 		//Emulate one cycle
