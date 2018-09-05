@@ -76,6 +76,67 @@ void chip8::emulateCycle()
 				default:
 					printf("Unknown opcode [0x0000]: 0x%X\n", opcode);
 			}
+		case 0x1000:    // 1NNN: Jumps to address NNN
+			pc = opcode & 0x0FFF;
+		break;
+
+		case 0x2000:	// 2NNN: Calls subroutine at NNN
+			stack[sp] = pc;
+			++sp;
+			pc = opcode & 0x0FF;
+		break;
+
+		case 0x3000:	//3XNN: Skips the next instruction of VX doesn't equal NN
+			if (V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF))
+				pc += 4;
+			else
+				pc += 2;
+		break;
+
+		case 0x4000:    //4XNN: Skips the next instruction if VX doesn't equal NN
+			if (V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF))
+				pc += 4;
+			else
+				pc += 2;
+		break;
+
+		case 0x5000:	//5XY0: Skips the next instruction if VX equals VY
+			if (V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4])
+				pc += 4;
+			else
+				pc += 2;
+		break;
+
+		case 0x6000:	//6XNN: Sets VX to NN
+			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
+			pc += 2;
+		break;
+
+		case 0x7000:	//7XNN: Adds NN to VX (Carry flag not changed)
+			V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
+			pc += 2;
+		break;
+
+		case 0x8000:
+			switch (opcode & 0x000F)
+			{
+				case 0x0000:	//8XY0: Sets VX to the value of VY
+					V[(opcode & 0x00F0) >> 8] = V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
+
+				case 0x0001:	//8XY1: Sets VX to "VX or VY"
+					V[(opcode & 0x0F00) >> 8] |= V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
+
+				case 0x0002: // 0x8XY2: Sets VX to "VX and VY"
+					V[(opcode & 0x0F00) >> 8] &= V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
+
+
+			}
 		case 0xA000:	//ANNN: Sets I to the address NNN
 			//execute opcode
 			I = opcode & 0x0FFF;

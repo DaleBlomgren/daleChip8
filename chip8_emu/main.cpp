@@ -61,7 +61,7 @@ int main()
 		//myChip8.setKeys();
 
 		window.clear();
-		window.draw(shape);
+		//window.draw(shape);
 		window.display();
 	}
 
