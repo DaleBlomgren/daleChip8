@@ -245,8 +245,80 @@ void chip8::emulateCycle()
 				default:
 					printf("Unknown opcode[0xE000]: 0x%X\n", opcode);
 			}
-			break;
-		//more opcodes//
+		break;
+		
+		case 0xF000:
+			switch (opcode & 0x00FF) {
+				case 0x0007:		// FX07: Sets VX to the value of the delay timer.
+					V[(opcode & 0x0F00) >> 8] = delay_timer;
+					pc += 2;
+				break;
+
+				case 0x000A: {		// FX0A: A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
+					bool pressed = false;
+
+					for (int i = 0; i < 16; ++i) {
+						if (key[i] != 0) {
+							V[(opcode & 0x0F00) >> 8] = i;
+							pressed = true;
+						}
+					}
+					//  skip a cycle and try again
+					if (!pressed)
+						return;
+					pc += 2;
+				}
+				break;
+
+				case 0x0015:		// FX15: Sets the delay timer to VX. 
+					delay_timer = V[(opcode & 0x0F00) >> 8];
+					pc += 2;
+				break;
+
+				case 0x0018:		// FX18: Sets the sound timer to VX.
+					sound_timer = V[(opcode & 0x0F00) >> 8];
+					pc += 2;
+				break;
+
+				case 0x001E:		// FX1E:	Adds VX to I
+					I = V[(opcode & 0x0F00) >> 8];
+					pc += 2;
+				break;
+
+				case 0x0029:		// FX29: Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font. 
+					I = V[(opcode & 0x0F00) >> 8] * 0x5;
+					pc += 2;
+				break;
+
+				case 0x0033:		//FX33: Stores the binary-coded decimal representation of VX, with the most significant of three digits at the address in I, the middle digit at I plus 1, and the least significant digit at I plus 2.
+									//In other words, take the decimal representation of VX, place the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2.
+					memory[I] = V[(opcode & 0x0F00) >> 8] / 100;
+					memory[I + 1] = (V[(opcode & 0x0F00) >> 8] / 10) % 10;
+					memory[I + 2] = (V[(opcode & 0x0F00) >> 8] % 100) % 10;
+					pc += 2;
+				break;
+
+				case 0x0055:		//FX55: Stores V0 to VX (including VX) in memory starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified.
+					for (int i = 0; i <= ((opcode & 0x0F00) >> 8); ++i)
+						memory[I + i] = V[i];
+
+					I += ((opcode & 0x0F00) >> 8) + 1;
+					pc += 2;
+				break;
+
+				case 0x0065:		//FX65: Fills V0 to VX (including VX) with values from memory starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified. 
+					for (int i = 0; i <= ((opcode & 0x0F00) >> 8); ++i)
+						V[i] = memory[I + i];
+
+					I += ((opcode & 0x0F00) >> 8) + 1;
+					pc += 2;
+				break;
+
+				default:
+					printf("Unknown opcode [0xF000]: 0x%X\n", opcode);
+			}
+
+		break;
 
 		default:
 			printf("Unknown opcode: 0x%X\n", opcode);
@@ -263,4 +335,55 @@ void chip8::emulateCycle()
 			printf("BEEP!\n");
 		--sound_timer;
 	}
+}
+
+bool chip8::loadApplication(const char * filename)
+{
+	init();
+	printf("Loading: %s\n", filename);
+
+	// Open file
+	FILE * pFile = fopen(filename, "rb");
+	if (pFile == NULL)
+	{
+		fputs("File error", stderr);
+		return false;
+	}
+
+	// Check file size
+	fseek(pFile, 0, SEEK_END);
+	long lSize = ftell(pFile);
+	rewind(pFile);
+	printf("Filesize: %d\n", (int)lSize);
+
+	// Allocate memory to contain the whole file
+	char * buffer = (char*)malloc(sizeof(char) * lSize);
+	if (buffer == NULL)
+	{
+		fputs("Memory error", stderr);
+		return false;
+	}
+
+	// Copy the file into the buffer
+	size_t result = fread(buffer, 1, lSize, pFile);
+	if (result != lSize)
+	{
+		fputs("Reading error", stderr);
+		return false;
+	}
+
+	// Copy buffer to Chip8 memory
+	if ((4096 - 512) > lSize)
+	{
+		for (int i = 0; i < lSize; ++i)
+			memory[i + 512] = buffer[i];
+	}
+	else
+		printf("Error: ROM too big for memory");
+
+	// Close file, free buffer
+	fclose(pFile);
+	free(buffer);
+
+	return true;
 }
