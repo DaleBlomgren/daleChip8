@@ -135,13 +135,72 @@ void chip8::emulateCycle()
 					pc += 2;
 				break;
 
+				case 0x0003:	//8XY3: Sets VX to "VX xor VY"
+					V[(opcode & 0x0F00) >> 8] ^= V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
 
+				case 0x0004:	//8XY4: Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't. 
+					if (V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8]))
+						V[0xF] = 1; //carry
+					else
+						V[0xF] = 0;
+					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
+
+				case 0x0005:	//8XY5: VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't. 
+					if (V[(opcode & 0x00F0) >> 4] > V[(opcode & 0x0F00) >> 8])
+						V[0xF] = 0; // there is a borrow
+					else
+						V[0xF] = 1;
+					V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
+					pc += 2;
+				break;
+
+				case 0x0006:	//8XY6: Stores the least significant bit of VX in VF and then shifts VX to the right by 1.
+					V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x1;
+					V[(opcode & 0x0F00) >> 8] >>= 1;
+					pc += 2;
+				break;
+
+				case 0x0007:	//8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't. 
+					if (V[(opcode & 0x0F00) >> 8] > V[(opcode & 0x00F0) >> 4])	// VY-VX
+						V[0xF] = 0; // there is a borrow
+					else
+						V[0xF] = 1;
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
+					pc += 2;
+				break;
+
+				case 0x000E: // 0x8XYE: Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift
+					V[0xF] = V[(opcode & 0x0F00) >> 8] >> 7;
+					V[(opcode & 0x0F00) >> 8] <<= 1;
+					pc += 2;
+				break;
+
+				default:
+					printf("Unknown opcode [0x8000]: 0x%X\n", opcode);
 			}
+		break;
+
+		case 0x9000:	// 0x9XY0: Skips the next instruction if VX doesn't equal VY.
+			if (V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4])
+				pc += 4;
+			else
+				pc += 2;
+		break;
+
 		case 0xA000:	//ANNN: Sets I to the address NNN
-			//execute opcode
 			I = opcode & 0x0FFF;
 			pc += 2;
 		break;
+
+		case 0xB000:	///BNNN: Jumps to the address NNN plus V0
+			pc = (opcode & 0x0FFF) + V[0];
+		break;
+
+		case 0xC000:	//CXNN: Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN. 
 
 		case 0xD000: //graphicx
 		{
