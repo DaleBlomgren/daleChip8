@@ -18,24 +18,32 @@
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32
 
-chip8 myChip8;
+chip8 daleChip8;
 int modifier = 10;
 
 int display_width = SCREEN_WIDTH * modifier;
 int display_height = SCREEN_HEIGHT * modifier;
 
+void keyboardDown(unsigned char key, int x, int y);
+void keyboardUp(unsigned char key, int x, int y);
 
 int main(int argc, char **argv)
 {
+	if (argc < 2) {
+		printf("Usage: daleChip8.exe chip8application\n\n");
+		return 1;
+	}
 	//setup window
 	sf::RenderWindow window(sf::VideoMode(display_width, display_height), "SFML works!");
+
 	//sf::CircleShape shape(100.f);
 	//shape.setFillColor(sf::Color::Green);
 
-	//setup input, clear memory registers and screen
-
+	// setup input, clear memory registers and screen
 	// load game into memory
-	
+	if (!daleChip8.loadApplication(argv[1]))
+		return 1;
+
 	//emulation loop
 	sf::Image image;
 	image.create(display_width, display_height, sf::Color::White);
@@ -52,7 +60,7 @@ int main(int argc, char **argv)
 		}
 
 		//If draw flag is set, update screen
-		if (myChip8.drawFlag)
+		if (daleChip8.drawFlag)
 		{
 			//drawGraphics();
 		}
@@ -75,46 +83,46 @@ void keyboardDown(unsigned char key, int x, int y)
 	if (key == 27)    // esc
 		exit(0);
 
-	if (key == '1')		myChip8.key[0x1] = 1;
-	else if (key == '2')	myChip8.key[0x2] = 1;
-	else if (key == '3')	myChip8.key[0x3] = 1;
-	else if (key == '4')	myChip8.key[0xC] = 1;
+	if (key == '1')		daleChip8.key[0x1] = 1;
+	else if (key == '2')	daleChip8.key[0x2] = 1;
+	else if (key == '3')	daleChip8.key[0x3] = 1;
+	else if (key == '4')	daleChip8.key[0xC] = 1;
 
-	else if (key == 'q')	myChip8.key[0x4] = 1;
-	else if (key == 'w')	myChip8.key[0x5] = 1;
-	else if (key == 'e')	myChip8.key[0x6] = 1;
-	else if (key == 'r')	myChip8.key[0xD] = 1;
+	else if (key == 'q')	daleChip8.key[0x4] = 1;
+	else if (key == 'w')	daleChip8.key[0x5] = 1;
+	else if (key == 'e')	daleChip8.key[0x6] = 1;
+	else if (key == 'r')	daleChip8.key[0xD] = 1;
 
-	else if (key == 'a')	myChip8.key[0x7] = 1;
-	else if (key == 's')	myChip8.key[0x8] = 1;
-	else if (key == 'd')	myChip8.key[0x9] = 1;
-	else if (key == 'f')	myChip8.key[0xE] = 1;
+	else if (key == 'a')	daleChip8.key[0x7] = 1;
+	else if (key == 's')	daleChip8.key[0x8] = 1;
+	else if (key == 'd')	daleChip8.key[0x9] = 1;
+	else if (key == 'f')	daleChip8.key[0xE] = 1;
 
-	else if (key == 'z')	myChip8.key[0xA] = 1;
-	else if (key == 'x')	myChip8.key[0x0] = 1;
-	else if (key == 'c')	myChip8.key[0xB] = 1;
-	else if (key == 'v')	myChip8.key[0xF] = 1;
+	else if (key == 'z')	daleChip8.key[0xA] = 1;
+	else if (key == 'x')	daleChip8.key[0x0] = 1;
+	else if (key == 'c')	daleChip8.key[0xB] = 1;
+	else if (key == 'v')	daleChip8.key[0xF] = 1;
 }
 
 void keyboardUp(unsigned char key, int x, int y)
 {
-	if (key == '1')		myChip8.key[0x1] = 0;
-	else if (key == '2')	myChip8.key[0x2] = 0;
-	else if (key == '3')	myChip8.key[0x3] = 0;
-	else if (key == '4')	myChip8.key[0xC] = 0;
+	if (key == '1')		daleChip8.key[0x1] = 0;
+	else if (key == '2')	daleChip8.key[0x2] = 0;
+	else if (key == '3')	daleChip8.key[0x3] = 0;
+	else if (key == '4')	daleChip8.key[0xC] = 0;
 
-	else if (key == 'q')	myChip8.key[0x4] = 0;
-	else if (key == 'w')	myChip8.key[0x5] = 0;
-	else if (key == 'e')	myChip8.key[0x6] = 0;
-	else if (key == 'r')	myChip8.key[0xD] = 0;
+	else if (key == 'q')	daleChip8.key[0x4] = 0;
+	else if (key == 'w')	daleChip8.key[0x5] = 0;
+	else if (key == 'e')	daleChip8.key[0x6] = 0;
+	else if (key == 'r')	daleChip8.key[0xD] = 0;
 
-	else if (key == 'a')	myChip8.key[0x7] = 0;
-	else if (key == 's')	myChip8.key[0x8] = 0;
-	else if (key == 'd')	myChip8.key[0x9] = 0;
-	else if (key == 'f')	myChip8.key[0xE] = 0;
+	else if (key == 'a')	daleChip8.key[0x7] = 0;
+	else if (key == 's')	daleChip8.key[0x8] = 0;
+	else if (key == 'd')	daleChip8.key[0x9] = 0;
+	else if (key == 'f')	daleChip8.key[0xE] = 0;
 
-	else if (key == 'z')	myChip8.key[0xA] = 0;
-	else if (key == 'x')	myChip8.key[0x0] = 0;
-	else if (key == 'c')	myChip8.key[0xB] = 0;
-	else if (key == 'v')	myChip8.key[0xF] = 0;
+	else if (key == 'z')	daleChip8.key[0xA] = 0;
+	else if (key == 'x')	daleChip8.key[0x0] = 0;
+	else if (key == 'c')	daleChip8.key[0xB] = 0;
+	else if (key == 'v')	daleChip8.key[0xF] = 0;
 }
