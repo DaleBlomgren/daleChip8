@@ -27,6 +27,9 @@ int display_height = SCREEN_HEIGHT * modifier;
 void keyboardDown(unsigned char key, int x, int y);
 void keyboardUp(unsigned char key, int x, int y);
 
+typedef unsigned __int8 u8;
+u8 screenPlacement[SCREEN_HEIGHT][SCREEN_WIDTH][3]; //new data structure, uses 8 bits to quickly transfer data in kernel level programming
+
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
@@ -46,11 +49,15 @@ int main(int argc, char **argv)
 
 	//emulation loop
 	sf::Image image;
-	image.create(display_width, display_height, sf::Color::White);
+	image.create(display_width, display_height, sf::Color::Black);
+	sf::Sprite sprite;
+	sf::Texture texture;
+	sf::IntRect area = sf::IntRect();
+
 	while (window.isOpen())
 	{
 		//Emulate one cycle
-		//myChip8.emulateCycle();
+		daleChip8.emulateCycle();
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -63,13 +70,36 @@ int main(int argc, char **argv)
 		if (daleChip8.drawFlag)
 		{
 			//drawGraphics();
+			// Update pixels
+			for (int y = 0; y < 32; ++y)
+				for (int x = 0; x < 64; ++x)
+					if (daleChip8.gfx[(y * 64) + x] == 0)
+						screenPlacement[y][x][0] = screenPlacement[y][x][1] = screenPlacement[y][x][2] = 0;	// Disabled
+					else
+						screenPlacement[y][x][0] = screenPlacement[y][x][1] = screenPlacement[y][x][2] = 255;  // Enabled
+
+			for (int y = 0; y < 32; y++)
+			{
+				for (int x = 0; x < 64; x++)
+				{
+					if (screenPlacement[y][x][0] == 255)
+						image.setPixel(x, y, sf::Color::Black);
+					else
+						image.setPixel(x, y, sf::Color::White);
+				}
+			}
+
+			if (!texture.loadFromImage(image, area)) {
+				printf("error with loadFromImage()\n");
+				exit(2);
+			}
 		}
 
 		//Store key press state (Press and Release)
 		//myChip8.setKeys();
-
+		sprite.setTexture(texture, false); // You can redraw the texture if there is a new texture, you just gotta set the bool later
 		window.clear();
-		//window.draw(shape);
+		window.draw(sprite);
 		window.display();
 	}
 
