@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdint.h>
 
 chip8::chip8()
 {
@@ -71,6 +72,8 @@ void chip8::emulateCycle()
 	//fetch opcode
 	opcode = memory[pc] << 8 | memory[pc + 1]; //bitwise or operation 
 	//decode opcode
+	printf("opcode: %X\n", opcode);
+		
 	switch (opcode & 0xF000) {
 		//opcodes//
 		case 0x0000:
@@ -217,6 +220,9 @@ void chip8::emulateCycle()
 		break;
 
 		case 0xC000:	//CXNN: Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN. 
+			V[(opcode & 0x0F00) >> 8] = (rand() % 0xFF) & (opcode & 0x00FF);
+			pc += 2;
+		break;
 
 		case 0xD000: //DXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen
 		{
@@ -361,7 +367,7 @@ bool chip8::loadApplication(const char * filename)
 
 	// Open file
 	FILE *pFile;
-	err = fopen_s(&pFile, filename, "r");
+	err = fopen_s(&pFile, filename, "rb");
 	if (pFile == NULL)
 	{
 		fputs("File error", stderr);
@@ -386,7 +392,8 @@ bool chip8::loadApplication(const char * filename)
 	size_t result = fread(buffer, 1, lSize, pFile);
 	if (result != lSize)
 	{
-		fputs("Reading error", stderr);
+		fputs("Reading error\n", stderr);
+		printf("result: %d\n", (int)result);
 		return false;
 	}
 
@@ -394,11 +401,13 @@ bool chip8::loadApplication(const char * filename)
 	if ((4096 - 512) > lSize)
 	{
 		for (int i = 0; i < lSize; ++i)
-			memory[i + 512] = buffer[i];
+			memory[i + 512] = (uint8_t)buffer[i];
 	}
 	else
 		printf("Error: ROM too big for memory");
 
+	for (int i = 0; i < lSize; ++i)
+		printf("%X", buffer[i]);
 	// Close file, free buffer
 	fclose(pFile);
 	free(buffer);

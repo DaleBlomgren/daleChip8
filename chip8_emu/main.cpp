@@ -44,9 +44,12 @@ int main(int argc, char **argv)
 
 	// setup input, clear memory registers and screen
 	// load game into memory
-	if (!daleChip8.loadApplication(argv[1]))
-		return 1;
-
+	if (!daleChip8.loadApplication(argv[1])) {
+		printf("failure to load program\n");
+		printf("argv[1] : %s\n", argv[1]);
+		system("pause");
+		return 3;
+	}
 	//emulation loop
 	sf::Image image;
 	image.create(display_width, display_height, sf::Color::Black);
