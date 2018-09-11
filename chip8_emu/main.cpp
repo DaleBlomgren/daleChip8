@@ -24,7 +24,7 @@ int modifier = 10;
 int display_width = SCREEN_WIDTH * modifier;
 int display_height = SCREEN_HEIGHT * modifier;
 
-void keyboardDown(unsigned char key, int x, int y);
+void keyboardDown();
 void keyboardUp(unsigned char key, int x, int y);
 
 typedef unsigned __int8 u8;
@@ -96,7 +96,12 @@ int main(int argc, char **argv)
 		}
 
 		//Store key press state (Press and Release)
-		//myChip8.setKeys();
+		// Reset key state
+		for (int i = 0; i < 16; ++i)
+			daleChip8.key[i] = 0;
+
+		keyboardDown();
+
 		sprite.setTexture(texture, false); // You can redraw the texture if there is a new texture, you just gotta set the bool later
 		window.clear();
 		window.draw(sprite);
@@ -108,30 +113,46 @@ int main(int argc, char **argv)
 
 
 
-void keyboardDown(unsigned char key, int x, int y)
+void keyboardDown()
 {
-	if (key == 27)    // esc
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))    // esc
 		exit(0);
 
-	if (key == '1')		daleChip8.key[0x1] = 1;
-	else if (key == '2')	daleChip8.key[0x2] = 1;
-	else if (key == '3')	daleChip8.key[0x3] = 1;
-	else if (key == '4')	daleChip8.key[0xC] = 1;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))		
+		daleChip8.key[0x1] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))	
+		daleChip8.key[0x2] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))	
+		daleChip8.key[0x3] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))	
+		daleChip8.key[0xC] = 1;
 
-	else if (key == 'q')	daleChip8.key[0x4] = 1;
-	else if (key == 'w')	daleChip8.key[0x5] = 1;
-	else if (key == 'e')	daleChip8.key[0x6] = 1;
-	else if (key == 'r')	daleChip8.key[0xD] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))	
+		daleChip8.key[0x4] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))	
+		daleChip8.key[0x5] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))	
+		daleChip8.key[0x6] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))	
+		daleChip8.key[0xD] = 1;
 
-	else if (key == 'a')	daleChip8.key[0x7] = 1;
-	else if (key == 's')	daleChip8.key[0x8] = 1;
-	else if (key == 'd')	daleChip8.key[0x9] = 1;
-	else if (key == 'f')	daleChip8.key[0xE] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))	
+		daleChip8.key[0x7] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))	
+		daleChip8.key[0x8] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))	
+		daleChip8.key[0x9] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))	
+		daleChip8.key[0xE] = 1;
 
-	else if (key == 'z')	daleChip8.key[0xA] = 1;
-	else if (key == 'x')	daleChip8.key[0x0] = 1;
-	else if (key == 'c')	daleChip8.key[0xB] = 1;
-	else if (key == 'v')	daleChip8.key[0xF] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))	
+		daleChip8.key[0xA] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))	
+		daleChip8.key[0x0] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))	
+		daleChip8.key[0xB] = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::V))	
+		daleChip8.key[0xF] = 1;
 }
 
 void keyboardUp(unsigned char key, int x, int y)

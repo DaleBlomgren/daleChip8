@@ -357,9 +357,11 @@ bool chip8::loadApplication(const char * filename)
 {
 	init();
 	printf("Loading: %s\n", filename);
+	errno_t err;
 
 	// Open file
-	FILE * pFile = fopen(filename, "rb");
+	FILE *pFile;
+	err = fopen_s(&pFile, filename, "r");
 	if (pFile == NULL)
 	{
 		fputs("File error", stderr);
