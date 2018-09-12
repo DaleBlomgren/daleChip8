@@ -79,6 +79,7 @@ void chip8::emulateCycle()
 		case 0x0000:
 			switch (opcode & 0x000F)
 			{
+				printf("in opcode 0x0000\n");
 				case 0x0000:	// 0x00E0: clear screen
 					for (int i = 0; i < 2048; ++i)
 						gfx[i] = 0x0;
@@ -102,7 +103,7 @@ void chip8::emulateCycle()
 		case 0x2000:	// 2NNN: Calls subroutine at NNN
 			stack[sp] = pc;
 			++sp;
-			pc = opcode & 0x0FF;
+			pc = opcode & 0x0FFF;
 		break;
 
 		case 0x3000:	//3XNN: Skips the next instruction of VX doesn't equal NN
@@ -366,7 +367,7 @@ bool chip8::loadApplication(const char * filename)
 	errno_t err;
 
 	// Open file
-	FILE *pFile;
+	FILE *pFile; // = fopen(filename, "rb");
 	err = fopen_s(&pFile, filename, "rb");
 	if (pFile == NULL)
 	{
@@ -393,7 +394,7 @@ bool chip8::loadApplication(const char * filename)
 	if (result != lSize)
 	{
 		fputs("Reading error\n", stderr);
-		printf("result: %d\n", (int)result);
+		//printf("result: %d\n", (int)result);
 		return false;
 	}
 
@@ -406,8 +407,8 @@ bool chip8::loadApplication(const char * filename)
 	else
 		printf("Error: ROM too big for memory");
 
-	for (int i = 0; i < lSize; ++i)
-		printf("%X", buffer[i]);
+	//for (int i = 0; i < lSize; ++i)
+	//	printf("%X", buffer[i]);
 	// Close file, free buffer
 	fclose(pFile);
 	free(buffer);
