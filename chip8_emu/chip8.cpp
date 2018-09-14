@@ -72,14 +72,15 @@ void chip8::emulateCycle()
 	//fetch opcode
 	opcode = memory[pc] << 8 | memory[pc + 1]; //bitwise or operation 
 	//decode opcode
-	printf("opcode: %X\n", opcode);
+	//printf("opcode: %X\n", opcode);
+	//printf("pc: %X\n", pc);
 		
 	switch (opcode & 0xF000) {
 		//opcodes//
 		case 0x0000:
 			switch (opcode & 0x000F)
 			{
-				printf("in opcode 0x0000\n");
+				
 				case 0x0000:	// 0x00E0: clear screen
 					for (int i = 0; i < 2048; ++i)
 						gfx[i] = 0x0;
@@ -88,6 +89,7 @@ void chip8::emulateCycle()
 				break;
 
 				case 0x000E:		//0x00EE: returns from subroutine
+					//printf("return\n");
 					--sp;			// decrement the level of your stack
 					pc = stack[sp]; //insert stored return address from stack back to your program counter
 					pc += 2;
@@ -96,6 +98,8 @@ void chip8::emulateCycle()
 				default:
 					printf("Unknown opcode [0x0000]: 0x%X\n", opcode);
 			}
+		break;
+
 		case 0x1000:    // 1NNN: Jumps to address NNN
 			pc = opcode & 0x0FFF;
 		break;
@@ -229,7 +233,7 @@ void chip8::emulateCycle()
 		{
 			unsigned short x = V[(opcode & 0x0F00) >> 8];
 			unsigned short y = V[(opcode & 0x00F0) >> 4];
-			unsigned short height = opcode & 0x00F;
+			unsigned short height = opcode & 0x000F;
 			unsigned short pixel;
 
 			V[0xF] = 0;
@@ -340,8 +344,7 @@ void chip8::emulateCycle()
 				default:
 					printf("Unknown opcode [0xF000]: 0x%X\n", opcode);
 			}
-
-		break;
+			break;
 
 		default:
 			printf("Unknown opcode: 0x%X\n", opcode);

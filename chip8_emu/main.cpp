@@ -105,7 +105,11 @@ int main(int argc, char **argv)
 
 		keyboardDown();
 
+		//sf::Vector2f scale = sprite.getScale();
+		//sprite.setScale(scale.x * modifier, scale.y * modifier);
+		
 		sprite.setTexture(texture, false); // You can redraw the texture if there is a new texture, you just gotta set the bool later
+		sprite.scale(2,2);
 		window.clear();
 		window.draw(sprite);
 		window.display();
