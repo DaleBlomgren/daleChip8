@@ -6,7 +6,7 @@
 
 chip8::chip8()
 {
-	
+	init();
 }
 
 chip8::~chip8() {
@@ -64,7 +64,7 @@ void chip8::init()
 	//clear screen
 	drawFlag = true;
 
-	srand(time(NULL));
+	srand(time(0));
 }
 
 void chip8::emulateCycle()
@@ -386,6 +386,7 @@ bool chip8::loadApplication(const char * filename)
 
 	// Allocate memory to contain the whole file
 	char * buffer = (char*)malloc(sizeof(char) * lSize);
+
 	if (buffer == NULL)
 	{
 		fputs("Memory error", stderr);
@@ -405,7 +406,7 @@ bool chip8::loadApplication(const char * filename)
 	if ((4096 - 512) > lSize)
 	{
 		for (int i = 0; i < lSize; ++i)
-			memory[i + 512] = (uint8_t)buffer[i];
+			memory[i + 512] = buffer[i];
 	}
 	else
 		printf("Error: ROM too big for memory");

@@ -39,9 +39,6 @@ int main(int argc, char **argv)
 	//setup window
 	sf::RenderWindow window(sf::VideoMode(display_width, display_height), "SFML works!");
 
-	//sf::CircleShape shape(100.f);
-	//shape.setFillColor(sf::Color::Green);
-
 	// setup input, clear memory registers and screen
 	// load game into memory
 	if (!daleChip8.loadApplication(argv[1])) {
