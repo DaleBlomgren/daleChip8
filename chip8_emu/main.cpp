@@ -19,10 +19,10 @@
 #define SCREEN_HEIGHT 32
 
 chip8 daleChip8;
-int modifier = 10;
+//int modifier = 10;
 
-int display_width = SCREEN_WIDTH * modifier;
-int display_height = SCREEN_HEIGHT * modifier;
+unsigned int display_width = SCREEN_WIDTH;// *modifier;
+unsigned int display_height = SCREEN_HEIGHT;// *modifier;
 
 void keyboardDown();
 void keyboardUp(unsigned char key, int x, int y);
@@ -38,9 +38,9 @@ int main(int argc, char **argv)
 	}
 	//setup window
 	sf::RenderWindow window(sf::VideoMode(display_width, display_height), "SFML works!");
-
+	//window.setVerticalSyncEnabled(true);
 	// setup input, clear memory registers and screen
-	// load game into memory
+	// load software into memory
 	if (!daleChip8.loadApplication(argv[1])) {
 		printf("failure to load program\n");
 		printf("argv[1] : %s\n", argv[1]);
@@ -62,8 +62,10 @@ int main(int argc, char **argv)
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed) {
 				window.close();
+				exit(0);
+			}
 		}
 
 		//If draw flag is set, update screen
@@ -102,11 +104,11 @@ int main(int argc, char **argv)
 
 		keyboardDown();
 
-		//sf::Vector2f scale = sprite.getScale();
+		sf::Vector2f scale = sprite.getScale();
 		//sprite.setScale(scale.x * modifier, scale.y * modifier);
 		
 		sprite.setTexture(texture, false); // You can redraw the texture if there is a new texture, you just gotta set the bool later
-		sprite.scale(2,2);
+		//sprite.scale(2,2);
 		window.clear();
 		window.draw(sprite);
 		window.display();

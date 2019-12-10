@@ -1,3 +1,2 @@
-﻿  chip8.cpp
-C:\repo\daleChip8\chip8_emu\chip8.cpp(67,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+﻿  main.cpp
   chip8_emu.vcxproj -> C:\repo\daleChip8\x64\Debug\chip8_emu.exe

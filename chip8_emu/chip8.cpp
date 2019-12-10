@@ -6,7 +6,7 @@
 
 chip8::chip8()
 {
-	init();
+	
 }
 
 chip8::~chip8() {
