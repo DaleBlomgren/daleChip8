@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 class chip8 {
 	public:
@@ -19,7 +20,7 @@ class chip8 {
 
 		unsigned char V[16];	//V-regs (V0-VF)
 		unsigned short stack[16];  //Stack (16 levels)
-		unsigned char memory[4096];//Memory (size == 4k)
+		uint8_t memory[4096];//Memory (size == 4k)
 
 		unsigned char delay_timer;
 		unsigned char sound_timer;

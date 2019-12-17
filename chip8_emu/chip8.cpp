@@ -348,6 +348,7 @@ void chip8::emulateCycle()
 
 		default:
 			printf("Unknown opcode: 0x%X\n", opcode);
+			exit(4);
 	}
 	
 
@@ -385,7 +386,7 @@ bool chip8::loadApplication(const char * filename)
 	printf("Filesize: %d\n", (int)lSize);
 
 	// Allocate memory to contain the whole file
-	char * buffer = (char*)malloc(sizeof(char) * lSize);
+	char *buffer = (char*)malloc(sizeof(char) * lSize);
 
 	if (buffer == NULL)
 	{
@@ -406,7 +407,7 @@ bool chip8::loadApplication(const char * filename)
 	if ((4096 - 512) > lSize)
 	{
 		for (int i = 0; i < lSize; ++i)
-			memory[i + 512] = buffer[i];
+			memory[i + 512] = (uint8_t)buffer[i];
 	}
 	else
 		printf("Error: ROM too big for memory");
