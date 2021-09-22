@@ -1,5 +1,5 @@
 /********************************************************************
-** Project description
+** Tier 1 Emu project
 ** -------------------
 ** Name: daleChip8
 **
@@ -19,7 +19,7 @@
 #define SCREEN_HEIGHT 32
 
 chip8 daleChip8;
-//int modifier = 10;
+int modifier = 10;
 
 unsigned int display_width = SCREEN_WIDTH;// *modifier;
 unsigned int display_height = SCREEN_HEIGHT;// *modifier;
@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 		return 3;
 	}
 	//emulation loop
+	//printf("In emulation loop");
 	sf::Image image;
 	image.create(display_width, display_height, sf::Color::Black);
 	sf::Sprite sprite;
@@ -56,7 +57,8 @@ int main(int argc, char **argv)
 
 	while (window.isOpen())
 	{
-		//Emulate one cycle
+		
+		//Emulate a cycle
 		daleChip8.emulateCycle();
 
 		sf::Event event;
@@ -85,9 +87,9 @@ int main(int argc, char **argv)
 				for (int x = 0; x < 64; x++)
 				{
 					if (screenPlacement[y][x][0] == 255)
-						image.setPixel(x, y, sf::Color::Black);
-					else
 						image.setPixel(x, y, sf::Color::White);
+					else
+						image.setPixel(x, y, sf::Color::Black);
 				}
 			}
 

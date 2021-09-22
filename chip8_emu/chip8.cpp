@@ -72,8 +72,8 @@ void chip8::emulateCycle()
 	//fetch opcode
 	opcode = memory[pc] << 8 | memory[pc + 1]; //bitwise or operation 
 	//decode opcode
-	//printf("opcode: %X\n", opcode);
-	//printf("pc: %X\n", pc);
+	printf("opcode: %X\n", opcode);
+	printf("pc: %X\n", pc);
 		
 	switch (opcode & 0xF000) {
 		//opcodes//
@@ -145,7 +145,7 @@ void chip8::emulateCycle()
 			switch (opcode & 0x000F)
 			{
 				case 0x0000:	//8XY0: Sets VX to the value of VY
-					V[(opcode & 0x00F0) >> 8] = V[(opcode & 0x00F0) >> 4];
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 				break;
 
@@ -411,6 +411,7 @@ bool chip8::loadApplication(const char * filename)
 	}
 	else
 		printf("Error: ROM too big for memory");
+
 
 	//for (int i = 0; i < lSize; ++i)
 	//	printf("%X", buffer[i]);
